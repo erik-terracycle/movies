@@ -1,0 +1,16 @@
+defaults: &defaults
+  # check .env (or .env.sample)
+  url: <%= ENV['DATABASE_URL'] %>
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+  url: <%= ENV['DATABASE_URL'].gsub('_dev', '_test') %>
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults

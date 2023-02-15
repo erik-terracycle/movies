@@ -1,0 +1,56 @@
+<div class="container">
+  <br/>
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-10 col-lg-8">
+      <%= form_tag root_path, method: 'get', class: 'card card-sm' do %>
+        <div class="card-body row no-gutters align-items-center">
+          <div class="col-auto">
+            <i class="fas fa-search h4 text-body"></i>
+          </div>
+          <div class="col">
+            <%= search_field_tag :keywords, params[:keywords], class: "form-control form-control-lg form-control-borderless", placeholder: 'Search movies...' %>            
+          </div>
+          <div class="col-auto">
+            <button class="btn btn-lg btn-success" type="submit">Search</button>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="container mt-5">
+  <div class="row">
+    <% flash.each do |name, msg| %>
+      <div class="<%= "alert alert-#{name == 'notice' ? 'success' : 'error'}" %>">
+        <%= msg %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="container mt-5">
+  <% if @movies.blank? %>
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-10 col-lg-8">
+        <% if params[:keywords] %>
+          <p> No results found! </p>
+        <% else %>
+          <p> Search for a movie! </p>
+        <% end %>
+      </div>
+    </div>
+  <% elsif @movies == "processing" %>
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-10 col-lg-8">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <%= render partial: 'list', locals: { movies: @movies } %>
+  <% end %>
+</div>
