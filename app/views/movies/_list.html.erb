@@ -1,0 +1,30 @@
+<div class="row">
+  <% movies.each do |movie| %>
+    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+      <div class="card h-100">
+        <div class="image">
+          <% if movie['poster_path'] %>
+            <%= image_tag "https://image.tmdb.org/t/p/original/#{movie['poster_path']}", class: 'card-img-top', style: 'width: 100%' %>
+          <% else %>
+            <%= image_tag 'no-result.png', class: 'card-img-top', style: 'width: 100%' %>
+          <% end %>
+        </div>
+        <div class="card-body">
+          <h4 class="card-title">
+            <%= movie['title'] %>
+          </h4>
+          <h6>Release date: <%= movie['release_date'] %></h6>
+          <p class="card-text">
+          <%= movie['overview'] %>
+          </p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+<div class="row">
+  <div class="col-lg-8 col-md-8 col-sm-8 mb-8 mx-auto">
+    <%= will_paginate movies %>
+  </div>
+</div>
+
