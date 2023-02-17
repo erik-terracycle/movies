@@ -37,7 +37,6 @@ Sidekiq::Web.use Rack::Auth::Basic do |username, password|
   digest = ->(string) { ::Digest::SHA256.hexdigest(string.to_s) }
   creds = Rails.application.credentials.sidekiq
 
-  ActiveSupport::SecurityUtils.secure_compare(digest.(username), digest.(ENV['SIDEKIQ_USERNAME'])) &
-    ActiveSupport::SecurityUtils.secure_compare(digest.(password), digest.(ENV['SIDEKIQ_PASSWORD']))
+  ActiveSupport::SecurityUtils.secure_compare(digest.call(username), digest.call(ENV['SIDEKIQ_USERNAME'])) &
+    ActiveSupport::SecurityUtils.secure_compare(digest.call(password), digest.call(ENV['SIDEKIQ_PASSWORD']))
 end
-
