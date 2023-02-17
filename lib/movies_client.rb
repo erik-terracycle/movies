@@ -25,8 +25,8 @@ class MoviesClient
     end
 
     cache_object = SearchResult
-      .create_with(result_hash: @response_movies.to_json)
-      .find_or_create_by!(search_term: @keywords)
+                   .create_with(result_hash: @response_movies.to_json)
+                   .find_or_create_by!(search_term: @keywords)
 
     ActionCable.server.broadcast 'MoviesChannel', 'fetched'
   end
@@ -42,6 +42,7 @@ class MoviesClient
   end
 
   def movie_request_url(page)
-    "#{ENV['MOVIES_API_URL']}?api_key=#{ENV['MOVIES_API_KEY']}&language=en-US&query=#{@keywords.gsub(' ','%20')}&page=#{page}"
+    "#{ENV['MOVIES_API_URL']}?api_key=#{ENV['MOVIES_API_KEY']}&language=en-US&query=#{@keywords.gsub(' ',
+                                                                                                     '%20')}&page=#{page}"
   end
 end

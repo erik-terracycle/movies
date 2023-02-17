@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class MoviesChannel < ApplicationCable::Channel
   def subscribed
-    stream_from "MoviesChannel"
+    stream_from 'MoviesChannel'
   end
 
   def unsubscribed
