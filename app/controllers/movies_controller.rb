@@ -6,6 +6,7 @@ class MoviesController < ApplicationController
   MAX_PER_PAGE = 20
 
   def index
+    flash.clear
     return unless params[:keywords]
 
     @movies = MoviesService.new(params[:keywords], flash).movies
