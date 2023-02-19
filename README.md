@@ -1,2 +1,0 @@
-# movies
-Movies Search App
