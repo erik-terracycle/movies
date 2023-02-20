@@ -10,7 +10,7 @@ class MoviesFetchJob < ApplicationJob
 
   def perform(search_term)
     time = Benchmark.measure do
-      MoviesClient.new(keywords: search_term).search
+      MoviesApiService.new(keywords: search_term).search
     end
 
     puts "Fetch time: #{time}"
