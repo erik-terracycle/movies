@@ -1,48 +1,35 @@
 # frozen_string_literal: true
 
-require 'httpclient'
+require 'movies_client'
 
-# This class responsible to process movies list
+# Service to handle movies listing
 class MoviesClient
-  def initialize(args)
-    @keywords = args[:keywords]
-    @response_movies = []
+  def initialize(search_term, flash)
+    @search_term = search_term
+    @flash = flash
   end
 
-  def search
-    current_page = 1
+  def movies
+    cache_object = SearchResult.find_by(search_term: @search_term)
 
-    loop do
-      response = movie_request(current_page)
-      @response_body = JSON.parse(response.body)
+    if cache_object && cache_object.created_at > 2.minutes.ago
+      fetched_from = cache_object.fetch_count.zero? ? 'API' : 'DB'
+      flash[:alert] = "Fetched from #{fetched_from}! Count: #{cache_object.fetch_count}"
+      cache_object.increment!(:fetch_count, 1)
 
-      raise RuntimeError unless response.status == 200
+      JSON.parse(cache_object.result_hash)
 
-      @response_movies.concat(@response_body['results'])
-      current_page += 1
+    else
+      cache_object&.destroy
+      flash[:alert] = 'Processing...'
 
-      break if current_page > @response_body['total_pages']
+      movies = MoviesFetchJob.perform_later(@search_term)
+
+      'processing'
     end
-
-    cache_object = SearchResult
-                   .create_with(result_hash: @response_movies.to_json)
-                   .find_or_create_by!(search_term: @keywords)
-
-    ActionCable.server.broadcast 'MoviesChannel', 'fetched'
   end
 
   private
 
-  def movie_request(page)
-    HTTPClient.new.request(
-      :get,
-      movie_request_url(page),
-      body: {}
-    )
-  end
-
-  def movie_request_url(page)
-    "#{ENV['MOVIES_API_URL']}?api_key=#{ENV['MOVIES_API_KEY']}&language=en-US&query=#{@keywords.gsub(' ',
-                                                                                                     '%20')}&page=#{page}"
-  end
+  attr_accessor :search_term, :flash
 end

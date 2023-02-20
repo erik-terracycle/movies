@@ -9,7 +9,7 @@ class MoviesController < ApplicationController
     flash.clear
     return unless params[:keywords]
 
-    @movies = MoviesService.new(params[:keywords], flash).movies
+    @movies = MoviesClient.new(params[:keywords], flash).movies
 
     @movies = @movies.paginate(page: params[:page], per_page: MAX_PER_PAGE) unless @movies == 'processing'
   end
